@@ -7,6 +7,10 @@ tree.buildTree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 tree.add (3)
 tree.add( 343)
 tree.add(66)
+console.log(tree.isBalanced())
+tree.rebalance()
+console.log(tree.isBalanced())
+
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null || node === undefined) {
     return;
@@ -19,8 +23,3 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
  console.log(tree)
 
 setTimeout(() => prettyPrint(tree.root), 2000);
-
-
-console.log(tree.isBalanced())
-tree.rebalance()
-console.log(tree.isBalanced())
