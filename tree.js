@@ -49,4 +49,18 @@ class BST {
 		}
 		return current.data;
 	}
+
+    includes(data){
+        let current = this.root;
+        while (current) {
+            if (data === current.data) {
+                return true;
+            }
+            if (data < current.data){
+                current = current.left
+            } else {
+                current = current.right
+            }
+        } return false
+    }
 }
