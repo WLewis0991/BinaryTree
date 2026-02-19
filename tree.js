@@ -1,5 +1,7 @@
 import { Node } from "./node.js";
 
+export { BST };
+
 class BST {
 	constructor() {
 		this.root = null;
@@ -14,7 +16,7 @@ class BST {
 			const searchTree = function (node) {
 				if (data < node.data) {
 					if (node.left === null) {
-						node.left === new Node(data);
+						node.left = new Node(data);
 						return;
 					} else if (node.left !== null) {
 						return searchTree(node.left);
@@ -43,7 +45,7 @@ class BST {
 	}
 
 	findMax() {
-		const curent = this.root;
+		let current = this.root;
 		while (current.right !== null) {
 			current = current.right;
 		}
@@ -91,7 +93,7 @@ class BST {
 				node.data = tempNode.data;
 				node.right = removeNode(node.right, tempNode.data);
 				return node;
-			} else if ((data, node.data)) {
+			} else if (data < node.data) {
 				node.left = removeNode(node.left, data);
 				return node;
 			} else {
@@ -102,17 +104,41 @@ class BST {
 		this.root = removeNode(this.root, data);
 	}
 
-    buildTree(arr){
-        return this.sortedArray(arr.sort(compareNumbers))
-    }
+	depth(value) {
+		let current = this.root;
+		let currentDepth = 0;
 
+		while (current !== null) {
+			if (value === current.data) {
+				return currentDepth;
+			}
+			if (value < current.data) {
+				current = current.left;
+			} else {
+				current = current.right;
+			}
+			currentDepth += 1;
+		}
+
+		return -1;
+	}
+
+	buildTree(arr) {
+	    const sorted = [...new Set(arr)].sort(this.compareNumbers);
+	    this.root = this.sortedArray(sorted);
+	    return this.root;
+	}
+	/*
+    buildTree(arr){
+        return this.sortedArray(arr.sort(this.compareNumbers))
+    }
+*/
     compareNumbers(a, b) {
         return a - b;
     }
 
-
 	sortedArray(arr) {
-		return sortedArrayRecur(arr, 0, arr.length - 1);
+		return this.sortedArrayRecur(arr, 0, arr.length - 1);
 	}
 
 
@@ -123,14 +149,122 @@ class BST {
 		const root = new Node(arr[mid]);
 
 		// Divide from middle 
-		root.left = sortedArrayRecur(arr, start, mid - 1);
-		root.right = sortedArrayRecur(arr, mid + 1, end);
+		root.left = this.sortedArrayRecur(arr, start, mid - 1);
+		root.right = this.sortedArrayRecur(arr, mid + 1, end);
 
 		return root;
 	}
 
-    getHeight(root, h) {
-        if (root === null) return h - 1;
-        return Math.max(getHeight(root.left, h + 1), getHeight(root.right, h + 1));
-    }
+	getHeight(root, h) {
+		if (root === null) return h - 1;
+		return Math.max(this.getHeight(root.left, h + 1), this.getHeight(root.right, h + 1));
+	}
+
+	levelOrder(callback) {
+		if (this.root === null) {
+			return [];
+		}
+
+		const queue = [this.root];
+		const values = [];
+
+		while (queue.length > 0) {
+			const current = queue.shift();
+			if (callback) {
+				callback(current);
+			} else {
+				values.push(current.data);
+			}
+
+			if (current.left !== null) {
+				queue.push(current.left);
+			}
+			if (current.right !== null) {
+				queue.push(current.right);
+			}
+		}
+
+		return callback ? undefined : values;
+	}
+
+	inOrder(callback, node = this.root, values = []) {
+		if (node === null) {
+			return callback ? undefined : values;
+		}
+
+		this.inOrder(callback, node.left, values);
+		if (callback) {
+			callback(node);
+		} else {
+			values.push(node.data);
+		}
+		this.inOrder(callback, node.right, values);
+		return callback ? undefined : values;
+	}
+
+	preOrder(callback, node = this.root, values = []) {
+		if (node === null) {
+			return callback ? undefined : values;
+		}
+
+		if (callback) {
+			callback(node);
+		} else {
+			values.push(node.data);
+		}
+		this.preOrder(callback, node.left, values);
+		this.preOrder(callback, node.right, values);
+		return callback ? undefined : values;
+	}
+
+	postOrder(callback, node = this.root, values = []) {
+		if (node === null) {
+			return callback ? undefined : values;
+		}
+
+		this.postOrder(callback, node.left, values);
+		this.postOrder(callback, node.right, values);
+		if (callback) {
+			callback(node);
+		} else {
+			values.push(node.data);
+		}
+		return callback ? undefined : values;
+	}
+
+	inOrderValues(node = this.root, values = []) {
+		return this.inOrder(undefined, node, values);
+	}
+
+	isBalanced(node = this.root) {
+		const checkHeight = (current) => {
+			if (current === null) {
+				return 0;
+			}
+
+			const leftHeight = checkHeight(current.left);
+			if (leftHeight === -1) {
+				return -1;
+			}
+
+			const rightHeight = checkHeight(current.right);
+			if (rightHeight === -1) {
+				return -1;
+			}
+
+			if (Math.abs(leftHeight - rightHeight) > 1) {
+				return -1;
+			}
+
+			return Math.max(leftHeight, rightHeight) + 1;
+		};
+
+		return checkHeight(node) !== -1;
+	}
+
+	rebalance() {
+		const values = this.inOrderValues();
+		this.root = this.sortedArray(values);
+		return this.root;
+	}
 }
