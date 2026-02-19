@@ -63,4 +63,41 @@ class BST {
             }
         } return false
     }
+
+    remove(data){
+        const removeNode = function (node, data){ 
+            if (node == null){
+                return null;
+            }
+            if (data == node.data){
+                //if node has no children
+                if (node .left == null && node. right ==null){
+                    return null
+                }
+                //if node has no left child
+                if ( node.left == null){
+                    return node.right;
+                }
+                //if node has no right chile
+                if ( node.right == null){
+                    return node.left;
+                }
+                //if node has two children
+                var tempNode = node.right;
+                while (tempNode.left !== null) {
+                    tempNode = tempNode.left
+                }
+                node.data = tempNode.data;
+                node.right = removeNode(node.right, tempNode.data)
+                return node;
+            } else if (data , node.data){
+                node.left = removeNode(node.left,data);
+                return node
+            } else {
+                node.right = removeNode (node.right, data)
+                return node;
+            }
+        }
+        this.root = removeNode(this.root, data)
+    }
 }
