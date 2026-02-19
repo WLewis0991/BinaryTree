@@ -50,54 +50,87 @@ class BST {
 		return current.data;
 	}
 
-    includes(data){
-        let current = this.root;
-        while (current) {
-            if (data === current.data) {
-                return true;
-            }
-            if (data < current.data){
-                current = current.left
-            } else {
-                current = current.right
-            }
-        } return false
+	includes(data) {
+		let current = this.root;
+		while (current) {
+			if (data === current.data) {
+				return true;
+			}
+			if (data < current.data) {
+				current = current.left;
+			} else {
+				current = current.right;
+			}
+		}
+		return false;
+	}
+
+	remove(data) {
+		const removeNode = function (node, data) {
+			if (node == null) {
+				return null;
+			}
+			if (data == node.data) {
+				//if node has no children
+				if (node.left == null && node.right == null) {
+					return null;
+				}
+				//if node has no left child
+				if (node.left == null) {
+					return node.right;
+				}
+				//if node has no right chile
+				if (node.right == null) {
+					return node.left;
+				}
+				//if node has two children
+				var tempNode = node.right;
+				while (tempNode.left !== null) {
+					tempNode = tempNode.left;
+				}
+				node.data = tempNode.data;
+				node.right = removeNode(node.right, tempNode.data);
+				return node;
+			} else if ((data, node.data)) {
+				node.left = removeNode(node.left, data);
+				return node;
+			} else {
+				node.right = removeNode(node.right, data);
+				return node;
+			}
+		};
+		this.root = removeNode(this.root, data);
+	}
+
+    buildTree(arr){
+        return this.sortedArray(arr.sort(compareNumbers))
     }
 
-    remove(data){
-        const removeNode = function (node, data){ 
-            if (node == null){
-                return null;
-            }
-            if (data == node.data){
-                //if node has no children
-                if (node .left == null && node. right ==null){
-                    return null
-                }
-                //if node has no left child
-                if ( node.left == null){
-                    return node.right;
-                }
-                //if node has no right chile
-                if ( node.right == null){
-                    return node.left;
-                }
-                //if node has two children
-                var tempNode = node.right;
-                while (tempNode.left !== null) {
-                    tempNode = tempNode.left
-                }
-                node.data = tempNode.data;
-                node.right = removeNode(node.right, tempNode.data)
-                return node;
-            } else if (data , node.data){
-                node.left = removeNode(node.left,data);
-                return node
-            } else {
-                node.right = removeNode (node.right, data)
-                return node;
-            }
-        }
-        this.root = removeNode(this.root, data)
+    compareNumbers(a, b) {
+        return a - b;
+    }
+
+
+	sortedArray(arr) {
+		return sortedArrayRecur(arr, 0, arr.length - 1);
+	}
+
+
+	sortedArrayRecur(arr, start, end) {
+		if (start > end) return null;
+
+		const mid = start + Math.floor((end - start) / 2);
+		const root = new Node(arr[mid]);
+
+		// Divide from middle 
+		root.left = sortedArrayRecur(arr, start, mid - 1);
+		root.right = sortedArrayRecur(arr, mid + 1, end);
+
+		return root;
+	}
+
+    getHeight(root, h) {
+        if (root === null) return h - 1;
+        return Math.max(getHeight(root.left, h + 1), getHeight(root.right, h + 1));
     }
 }
